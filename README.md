@@ -59,7 +59,7 @@ playbook.yml
     es_instance_type: "t2.small.elasticsearch"
     es_volume_size: "10"
   roles:
-       - { role: aansible-role-tf-logserver }
+       - { role: ansible-role-tf-logserver }
 ```
 
 Author Information
