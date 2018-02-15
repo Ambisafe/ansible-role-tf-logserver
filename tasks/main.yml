@@ -1,0 +1,53 @@
+---
+# installed terraform
+- name: Install terraform
+  package:
+    name: "terraform"
+    state: present
+
+# got terraform infrastructures for logserver
+- name: Create terraform data directory
+  file:
+    path: "{{ logserver_dir }}"
+    state: directory
+
+- name: Copy terraform logserver files to host
+  copy:
+    src: "terraform_logserver/"
+    dest: "{{ logserver_dir }}/terraform_logserver/"
+    force: yes
+
+- name: Create TF files for elasticsearch & proxy
+  template:
+    src: main.tf.j2
+    dest: "{{ logserver_dir }}/terraform_logserver/main.tf"
+
+- name: Compile nginx.conf
+  command: bash -c "cat {{ role_path }}/files/nginx/nginx.conf|gzip|base64"
+  register: nginx_conf_gz_b64
+
+- name: Create user_data for AWS
+  template:
+    src: aws_ec2_proxy.sh.j2
+    dest: "{{ logserver_dir }}/terraform_logserver/shared/aws_ec2_proxy.sh"
+
+# run terraform init
+- name: Run the terraform initialization
+  command: "terraform init"
+  args:
+    chdir: "{{ logserver_dir }}/terraform_logserver"
+    creates: "{{ logserver_dir }}/terraform_logserver/.terraform"
+
+# run terraform update modules
+- name: Run the terraform update modules
+  command: "terraform get -update"
+  args:
+    chdir: "{{ logserver_dir }}/terraform_logserver"
+
+#run terraform apply -auto-approve
+- name: Run the logserver installation on AWS
+  command: "terraform apply -auto-approve"
+  args:
+    chdir: "{{ logserver_dir }}/terraform_logserver"
+
+

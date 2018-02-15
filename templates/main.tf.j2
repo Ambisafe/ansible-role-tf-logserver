@@ -1,0 +1,75 @@
+provider "aws" {
+    access_key = "{{ aws_access_key }}"
+    secret_key = "{{ aws_secret_key }}"
+    region = "{{ aws_region }}"
+}
+
+module "es" {
+  source                         = "modules/tf_aws_elasticsearch"
+  domain_name                    = "{{ es_domain_name }}"
+  es_version                     = "{{ es_version }}"
+  vpc_options                    = {
+    security_group_ids = ["${aws_security_group.this.id}"]
+    subnet_ids         =  [ "{{ aws_subnet_id }}" ]
+  }
+  instance_count                 = "{{ es_instance_count }}"
+  instance_type                  = "{{ es_instance_type }}"
+  dedicated_master_type          = false
+  es_zone_awareness              = false
+  ebs_volume_size                = "{{ es_volume_size }}"
+
+}
+
+resource "aws_security_group" "this" {
+  description = "security group"
+
+  ingress {
+      from_port = 80
+      to_port = 80
+      protocol = "tcp"
+      cidr_blocks = ["{{ aws_cidr_block_from_port_80 }}"]
+  }
+
+  ingress {
+      from_port = 443
+      to_port = 443
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+      from_port = 0
+      to_port = 0
+      protocol = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  vpc_id = "{{ aws_vpc }}"
+}
+
+data "template_file" "init" {
+  template = "${file("shared/aws_ec2_proxy.sh")}"
+
+  vars {
+    aws_es_vpc = "${module.es.endpoint}"
+  }
+}
+
+resource "aws_eip" "this" {
+  instance = "${aws_instance.this.id}"
+  vpc      = true
+}
+
+resource "aws_instance" "this" {
+  instance_type = "{{ ec2_instance_type }}"
+  vpc_security_group_ids = [ "${aws_security_group.this.id}" ]
+  associate_public_ip_address = true
+  user_data = "${data.template_file.init.rendered}"
+  tags {
+    Name = "{{ ec2_name }}"
+  }
+
+  ami = "{{ ec2_ami }}"
+  availability_zone = "{{ aws_region }}a"
+  subnet_id = "{{ aws_subnet_id }}"
+}
