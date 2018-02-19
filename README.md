@@ -1,7 +1,7 @@
 Logserver deployment
 =========
 
-Role that install [Logserver](https://github.com/Ambisafe/ansible-role-tf-logserver) onto aws
+Ansible role that install [Logserver](https://github.com/Ambisafe/ansible-role-tf-logserver) onto aws through terraform
 
 Role Variables
 --------------
@@ -16,12 +16,16 @@ Role Variables
 -  `ec2_name:` uniquie identifier for proxy logserver
 -  `ec2_instance_type:` instance type to use for proxy logserver
 -  `ec2_ami:` The ID of the AMI with which the instance was launched
+-  `ec2_docker_compose:` docker-compose version
+-  `ec2_add_ssh_key:` ssh public key
+-  `ec2_nginx_version:` nginx version
+-  `ec2_logstash_version:` logstash version
 
 -  `es_domain_name:` unique identifier for the domain.
 -  `es_version:` elasticsearch version
 -  `es_instance_count:` number of instances in the cluster elasticsearch.
 -  `es_instance_type:` elasticsearch instance type to use for data nodes.
--  `es_volume_size:` size in GB of EBS volume to attach to each node and use for data storage.  If this parameter is set to 0 (the default), nodes will use instance storage.
+-  `es_volume_size:` size in GB of EBS volume to attach to each node and use for data storage.
 
 Example Playbook
 ----------------
@@ -49,9 +53,12 @@ playbook.yml
     aws_cidr_block_from_port_80: "0.0.0.0/0"
 
     ec2_name: "logserver-proxy"
-    ec2_instance_type: "t2.nano"
+    ec2_instance_type: "t2.small"
     ec2_ami: "ami-0000000"
-
+    ec2_docker_compose: "1.19.0"
+    ec2_ssh_public_key: "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    ec2_nginx_version: "1.13"
+    ec2_logstash_version: "6.2.1"
 
     es_domain_name: "elasticsearch_cluster"
     es_version: "6.0"

@@ -1,24 +1,61 @@
 #!/bin/bash
 
+mkdir -p /home/ec2-user/.ssh
+cat <<FILE > /home/ec2-user/.ssh/authorized_keys
+{{ ec2_ssh_public_key }}
+FILE
+chown ec2-user.ec2-user /home/ec2-user/.ssh/authorized_keys
+chmod 400 /home/ec2-user/.ssh/authorized_keys
+
 yum -y update
 yum -y erase docker
-yum -y install nginx
+cat << FILE > /etc/docker/daemon.json
+{
+  "storage-driver": "overlay2"
+}
+FILE
+yum -y install docker
+usermod -a -G docker ec2-user
+curl -L https://github.com/docker/compose/releases/download/{{ ec2_docker_compose }}/docker-compose-`uname -s`-`uname -m` | tee /usr/local/bin/docker-compose > /dev/null
+chmod +x /usr/local/bin/docker-compose
+chkconfig docker on
+service docker start
+
+cd /home/ec2-user
 
 export IP=`curl ifconfig.co`
 export ES=${aws_es_vpc}
-echo "export IP=$IP" >> /home/ec2-user/.bash_profile
-echo "export ES=$ES" >> /home/ec2-user/.bash_profile
+echo "export IP=$IP" >> .bash_profile
+echo "export ES=$ES" >> .bash_profile
 
-cd /etc/nginx/
-rm nginx.conf
+cat <<FILE > docker-compose.yml.gz.b64
+{{ docker_compose_gz_b64.stdout }}
+FILE
+cat docker-compose.yml.gz.b64|base64 --decode|gunzip >docker-compose.yml
+rm docker-compose.yml.gz.b64
+
 cat <<FILE > nginx.conf.gz.b64
 {{ nginx_conf_gz_b64.stdout }}
 FILE
 cat nginx.conf.gz.b64|base64 --decode|gunzip >nginx.conf
-rm nginx.conf.b64
+rm nginx.conf.gz.b64
 
-sed -i "s|__ES__|$ES|g" /etc/nginx/nginx.conf
-sed -i "s|__IP__|$IP|g" /etc/nginx/nginx.conf
+cat <<FILE > 02-input.conf.gz.b64
+{{ input_conf_gz_b64.stdout }}
+FILE
+cat 02-input.conf.gz.b64|base64 --decode|gunzip >02-input.conf
+rm 02-input.conf.gz.b64
 
-chkconfig nginx on
-service nginx start
+cat <<FILE > 30-elasticsearch-output.conf.gz.b64
+{{ elasticsearch_output_conf_gz_b64.stdout }}
+FILE
+cat 30-elasticsearch-output.conf.gz.b64|base64 --decode|gunzip >30-elasticsearch-output.conf
+rm 30-elasticsearch-output.conf.gz.b64
+
+sed -i "s|__ES__|$ES|g" ./nginx.conf
+sed -i "s|__IP__|$IP|g" ./nginx.conf
+sed -i "s|__ES__|$ES|g" ./30-elasticsearch-output.conf
+
+/usr/local/bin/docker-compose -f ./docker-compose.yml up -d
+
+
