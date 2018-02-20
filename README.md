@@ -8,7 +8,7 @@ Role Variables
 
 -  `aws_access_key:` access key for AWS
 -  `aws_secret_key:` secret key for AWS
--  `aws_region:` region for AWS
+-  `aws_region_name:` region for AWS
 -  `aws_vpc:` VPC Name
 -  `aws_subnet_id:` VPC Subnet ID for the Elasticsearch domain endpoint to be created in.
 -  `aws_cidr_block_from_port_80:`
@@ -47,7 +47,7 @@ playbook.yml
   vars:
     aws_access_key : "XXXXXXXXXXXX"
     aws_secret_key : "XXXXXXXXXXXX"
-    aws_region : "eu-west-1"
+    aws_region_name : "eu-west-1"
     aws_vpc : "vpc-0000000"
     aws_subnet_id: "subnet-0000000"
     aws_cidr_block_from_port_80: "0.0.0.0/0"
