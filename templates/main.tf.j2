@@ -84,6 +84,6 @@ resource "aws_instance" "this" {
   }
 
   ami = "{{ ec2_ami }}"
-  availability_zone = "{{ aws_region }}a"
+  availability_zone = "{{ aws_region_name }}a"
   subnet_id = "{{ aws_subnet_id }}"
 }
