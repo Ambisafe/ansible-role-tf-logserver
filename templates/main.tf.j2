@@ -1,11 +1,11 @@
 provider "aws" {
     access_key = "{{ aws_access_key }}"
     secret_key = "{{ aws_secret_key }}"
-    region = "{{ aws_region }}"
+    region = "{{ aws_region_name }}"
 }
 
 module "es" {
-  source                         = "modules/tf_aws_elasticsearch"
+  source                         = "github.com/terraform-community-modules/tf_aws_elasticsearch?ref=v0.1.0"
   domain_name                    = "{{ es_domain_name }}"
   es_version                     = "{{ es_version }}"
   vpc_options                    = {

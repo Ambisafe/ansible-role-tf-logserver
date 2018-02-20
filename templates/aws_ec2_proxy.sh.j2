@@ -7,8 +7,9 @@ FILE
 chown ec2-user.ec2-user /home/ec2-user/.ssh/authorized_keys
 chmod 400 /home/ec2-user/.ssh/authorized_keys
 
-yum -y update
 yum -y erase docker
+yum -y update
+
 cat << FILE > /etc/docker/daemon.json
 {
   "storage-driver": "overlay2"
