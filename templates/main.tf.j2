@@ -1,7 +1,5 @@
 provider "aws" {
-    access_key = "{{ aws_access_key }}"
-    secret_key = "{{ aws_secret_key }}"
-    region = "{{ aws_region_name }}"
+    region = "{{ aws_region }}"
 }
 
 module "es" {
@@ -84,6 +82,6 @@ resource "aws_instance" "this" {
   }
 
   ami = "{{ ec2_ami }}"
-  availability_zone = "{{ aws_region_name }}a"
+  availability_zone = "{{ aws_region }}a"
   subnet_id = "{{ aws_subnet_id }}"
 }

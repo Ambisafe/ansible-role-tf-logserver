@@ -1,4 +1,8 @@
 ---
+- name: set AWS region name
+  set_fact:
+    aws_region: "{{ (lookup('file', 'aws_region_names.json') | from_json).get( aws_region_name | regex_replace('[().]','') | regex_replace('[\ ]','_') ) }}"
+
 # installed terraform
 - name: Install unzip to unarchive terraform
   package:
