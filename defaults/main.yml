@@ -17,7 +17,5 @@ es_instance_count: "1"
 es_instance_type: "t2.small.elasticsearch"
 es_volume_size: "10"
 
-terraform_dir: "/opt/terraform"
 terraform_data_dir: "/opt/terraform/data"
-terraform_version: "0.11.3"
 

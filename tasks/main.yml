@@ -3,51 +3,6 @@
   set_fact:
     aws_region: "{{ (lookup('file', 'aws_region_names.json') | from_json).get( aws_region_name | regex_replace('[().]','') | regex_replace('[\ ]','_') ) }}"
 
-# installed terraform
-- name: Install unzip to unarchive terraform
-  package:
-    name: unzip
-    state: present
-
-- name: Create Terraform directory
-  file:
-    path: "{{ terraform_dir }}"
-    state: directory
-  register: terraform_directory
-
-- name: Check terraform version
-  shell: "terraform --version 2>&1 | grep {{ terraform_version }}"
-  failed_when: false
-  changed_when: false
-  register: terraform_versions_match
-
-- name: Create Terraform directory
-  file:
-    path: "{{ terraform_dir }}"
-    state: directory
-  register: terraform_directory
-  when: terraform_versions_match.rc != 0
-
-- name: Download terraform archive Linux 64 bits
-  get_url:
-    url: https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip
-    dest: /tmp/terraform-{{ terraform_version }}.zip
-  when: terraform_versions_match.rc != 0
-
-- name: Unarchive Terraform archive
-  unarchive:
-    src: /tmp/terraform-{{ terraform_version }}.zip
-    dest: "{{ terraform_dir }}"
-    copy: no
-  when: terraform_versions_match.rc != 0 or terraform_directory | changed
-
-- name: Adding terraform command to user path
-  file:
-    src: "{{ terraform_dir }}/terraform"
-    dest: /usr/bin/terraform
-    state: link
-  when: terraform_versions_match.rc != 0
-
 # got terraform infrastructures for logserver
 - name: Create terraform data directory
   file:

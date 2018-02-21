@@ -29,13 +29,11 @@ Role Variables
 
 Example Playbook
 ----------------
-requirements.txt
+requirements.yml
 
 ```
-  - name: logserver deployment
-    src: git@github.com:Ambisafe/ansible-role-tf-logserver.git
-    scm: git
-    version: master
+- name: ansible-role-tf-logserver
+  src: https://github.com/Ambisafe/ansible-role-tf-logserver.git
 ```
 
 playbook.yml
@@ -65,6 +63,7 @@ playbook.yml
     es_instance_count: "1"
     es_instance_type: "t2.small.elasticsearch"
     es_volume_size: "10"
+
   roles:
        - { role: ansible-role-tf-logserver }
 ```
