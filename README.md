@@ -45,14 +45,11 @@ playbook.yml
   vars:
     aws_access_key : "XXXXXXXXXXXX"
     aws_secret_key : "XXXXXXXXXXXX"
-    aws_region_name : "eu-west-1"
-    aws_vpc : "vpc-0000000"
-    aws_subnet_id: "subnet-0000000"
+    aws_region : "eu-west-2"
     aws_cidr_block_from_port_80: "0.0.0.0/0"
 
     ec2_name: "logserver-proxy"
     ec2_instance_type: "t2.small"
-    ec2_ami: "ami-0000000"
     ec2_docker_compose: "1.19.0"
     ec2_ssh_public_key: "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     ec2_nginx_version: "1.13"
