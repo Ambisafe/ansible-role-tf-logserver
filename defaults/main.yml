@@ -8,7 +8,7 @@ ec2_docker_compose: "1.19.0"
 ec2_nginx_version: "1.13"
 ec2_logstash_version: "6.2"
 
-es_domain_name: "test-elasticsearch"
+es_domain_name: "elasticsearch"
 es_version: "6.0"
 es_instance_count: "1"
 es_instance_type: "t2.small.elasticsearch"

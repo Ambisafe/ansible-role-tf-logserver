@@ -65,6 +65,12 @@
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
 
+#run create plan
+- name: Run the terraform create plan
+  command: "terraform plan -auto-approve"
+  args:
+    chdir: "{{ terraform_data_dir }}/terraform_logserver"
+
 #run terraform apply -auto-approve
 - name: Run the logserver installation on AWS
   command: "terraform apply -auto-approve"
