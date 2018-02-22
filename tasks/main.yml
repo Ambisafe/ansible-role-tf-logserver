@@ -53,7 +53,7 @@
 
 # run terraform init
 - name: Run the terraform initialization
-  command: "terraform init"
+  command: "terraform init -no-color"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
     creates: "{{ terraform_data_dir }}/terraform_logserver/.terraform"
@@ -65,19 +65,13 @@
     path: "{{ terraform_data_dir }}/terraform_logserver/.terraform/modules"
 
 - name: Run the terraform update modules
-  command: "terraform get"
-  args:
-    chdir: "{{ terraform_data_dir }}/terraform_logserver"
-
-#run create plan
-- name: Run the terraform create plan
-  command: "terraform plan -auto-approve"
+  command: "terraform get -no-color"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
 
 #run terraform apply -auto-approve
 - name: Run the logserver installation on AWS
-  command: "terraform apply -auto-approve"
+  command: "terraform apply -auto-approve -no-color "
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
 
