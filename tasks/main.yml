@@ -50,8 +50,15 @@
     creates: "{{ terraform_data_dir }}/terraform_logserver/.terraform"
 
 # run terraform update modules
+- name: Clean modules path
+  file:
+    state: absent
+    path: "{{ terraform_data_dir }}/terraform_logserver/modules/"
+  args:
+    chdir: "{{ terraform_data_dir }}/terraform_logserver"
+
 - name: Run the terraform update modules
-  command: "terraform get -update"
+  command: "terraform get"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
 

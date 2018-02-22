@@ -32,7 +32,7 @@ Example Playbook
 requirements.yml
 
 ```
-- name: ansible-role-tf-logserver
+- name: terraform-logserver
   src: https://github.com/Ambisafe/ansible-role-tf-logserver.git
 ```
 
@@ -43,8 +43,6 @@ playbook.yml
   hosts: localhost
   gather_facts: false
   vars:
-    aws_access_key : "XXXXXXXXXXXX"
-    aws_secret_key : "XXXXXXXXXXXX"
     aws_region : "eu-west-2"
     aws_cidr_block_from_port_80: "0.0.0.0/0"
 
@@ -62,7 +60,7 @@ playbook.yml
     es_volume_size: "10"
 
   roles:
-       - { role: ansible-role-tf-logserver }
+       - { role: terraform-logserver }
 ```
 
 Author Information
