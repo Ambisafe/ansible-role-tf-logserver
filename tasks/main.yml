@@ -1,4 +1,18 @@
 ---
+- name: Check variable aws_vpc_id
+  assert:
+    that:
+      - "aws_vpc_default != 'True'"
+      - "aws_vpc_id is defined"
+    msg: "AMBISAFE AWS_VPC_ID is not defined"
+
+- name: Check variable aws_subnet_id
+  assert:
+    that:
+      - "aws_vpc_default != 'True'"
+      - "aws_subnet_id is defined"
+    msg: "AMBISAFE AWS_SUBNET_ID is not defined"
+
 # got terraform infrastructures for logserver
 - name: Create terraform data directory
   file:
