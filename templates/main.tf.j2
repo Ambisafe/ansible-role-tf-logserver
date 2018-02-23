@@ -111,8 +111,14 @@ resource "aws_eip" "this" {
   vpc      = true
 }
 
+resource "aws_key_pair" "this" {
+  key_name   = "awx key"
+  public_key = "{{ ec2_ssh_public_key }}"
+}
+
 resource "aws_instance" "this" {
   instance_type = "{{ ec2_instance_type }}"
+  key_name = "awx key"
   vpc_security_group_ids = [ "${aws_security_group.this.id}" ]
   associate_public_ip_address = true
   user_data = "${data.template_file.init.rendered}"

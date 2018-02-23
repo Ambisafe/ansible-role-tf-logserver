@@ -1,12 +1,4 @@
 #!/bin/bash
-
-mkdir -p /home/ec2-user/.ssh
-cat <<FILE > /home/ec2-user/.ssh/authorized_keys
-{{ ec2_ssh_public_key }}
-FILE
-chown ec2-user.ec2-user /home/ec2-user/.ssh/authorized_keys
-chmod 400 /home/ec2-user/.ssh/authorized_keys
-
 yum -y erase docker
 yum -y update
 
