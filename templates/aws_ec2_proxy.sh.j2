@@ -13,10 +13,13 @@ usermod -a -G docker ec2-user
 cd /home/ec2-user
 export AWS_ACCESS_KEY_ID={{ aws_access_key_for_cw }}
 export AWS_SECRET_ACCESS_KEY={{ aws_secret_key_for_cw }}
+export AWS_REGION={{ aws_region }}
+echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >>/etc/default/docker
+echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >>/etc/default/docker
+echo "export AWS_REGION=$AWS_REGION" >>/etc/default/docker
+
 export IP=`curl ifconfig.co`
 export ES=${aws_es_vpc}
-echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >>.bash_profile
-echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >>.bash_profile
 echo "export IP=$IP" >> .bash_profile
 echo "export ES=$ES" >> .bash_profile
 
