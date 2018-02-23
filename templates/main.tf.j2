@@ -18,31 +18,6 @@ resource "aws_default_subnet" "this" {
     }
 }
 
-{% else %}
-
-resource "aws_vpc" "this" {
-  cidr_block           = "{{ aws_vpc_cidr_block }}"
-}
-resource "aws_subnet" "a" {
-  vpc_id            = "${aws_vpc.this.id}"
-  cidr_block        = "{{ aws_vpc_cidr_block | ipsubnet(20,0) }}"
-  availability_zone       = "{{ aws_region }}a"
-}
-
-resource "aws_subnet" "b" {
-  vpc_id            = "${aws_vpc.this.id}"
-  cidr_block        = "{{ aws_vpc_cidr_block | ipsubnet(20,1) }}"
-  availability_zone       = "{{ aws_region }}b"
-}
-
-resource "aws_subnet" "c" {
-  vpc_id            = "${aws_vpc.this.id}"
-  cidr_block        = "{{ aws_vpc_cidr_block | ipsubnet(20,2) }}"
-  availability_zone       = "{{ aws_region }}c"
-}
-
-{% endif %}
-
 module "es" {
   source                         = "modules/tf_aws_elasticsearch"
   domain_name                    = "{{ es_domain_name }}"
@@ -53,7 +28,7 @@ module "es" {
 {% if aws_vpc_default == 'True' %}
     subnet_ids         = ["${aws_default_subnet.this.id}"]
 {% else %}
-    subnet_ids         = ["${aws_subnet.a.id}"]
+    subnet_ids         = ["{{ aws_subnet_id }}"]
 {% endif %}
 
   }
@@ -106,7 +81,7 @@ resource "aws_security_group" "this" {
 {% if aws_vpc_default == 'True' %}
   vpc_id = "${aws_default_vpc.this.id}"
 {% else %}
-  vpc_id = "${aws_vpc.this.id}"
+  vpc_id = "{{ aws_vpc_id }}"
 {% endif %}
 
 }

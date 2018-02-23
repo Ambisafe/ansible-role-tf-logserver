@@ -1,8 +1,4 @@
 ---
-- name: Install util netaddr
-  pip:
-    name: netaddr
-
 # got terraform infrastructures for logserver
 - name: Create terraform data directory
   file:
