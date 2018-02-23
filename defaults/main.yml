@@ -3,7 +3,7 @@ ec2_instance_type: "t2.small"
 ec2_name: "logserver-proxy"
 ec2_docker_compose: "1.19.0"
 ec2_nginx_version: "1.13"
-ec2_logstash_version: "6.2"
+ec2_logstash_version: "6.2.2"
 
 es_domain_name: "elasticsearch"
 es_version: "6.0"

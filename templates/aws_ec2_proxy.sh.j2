@@ -9,10 +9,6 @@ cat << FILE > /etc/docker/daemon.json
 FILE
 yum -y install docker
 usermod -a -G docker ec2-user
-curl -L https://github.com/docker/compose/releases/download/{{ ec2_docker_compose }}/docker-compose-`uname -s`-`uname -m` | tee /usr/local/bin/docker-compose > /dev/null
-chmod +x /usr/local/bin/docker-compose
-chkconfig docker on
-service docker start
 
 cd /home/ec2-user
 export AWS_ACCESS_KEY_ID={{ aws_access_key_for_cw }}
@@ -23,6 +19,11 @@ echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >>.bash_profile
 echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >>.bash_profile
 echo "export IP=$IP" >> .bash_profile
 echo "export ES=$ES" >> .bash_profile
+
+curl -L https://github.com/docker/compose/releases/download/{{ ec2_docker_compose }}/docker-compose-`uname -s`-`uname -m` | tee /usr/local/bin/docker-compose > /dev/null
+chmod +x /usr/local/bin/docker-compose
+chkconfig docker on
+service docker start
 
 cat <<FILE > docker-compose.yml.gz.b64
 {{ docker_compose_gz_b64.stdout }}
