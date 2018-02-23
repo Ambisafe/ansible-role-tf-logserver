@@ -17,6 +17,7 @@ resource "aws_default_subnet" "this" {
         Name = "Default subnet for {{ aws_region }}a"
     }
 }
+{% endif %}
 
 module "es" {
   source                         = "modules/tf_aws_elasticsearch"
