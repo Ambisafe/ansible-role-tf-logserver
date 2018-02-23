@@ -1,7 +1,4 @@
 ---
-aws_region: ""
-
-
 ec2_instance_type: "t2.small"
 ec2_name: "logserver-proxy"
 ec2_docker_compose: "1.19.0"

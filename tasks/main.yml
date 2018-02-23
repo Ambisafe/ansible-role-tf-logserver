@@ -1,67 +1,77 @@
 ---
-- name: Check variable aws_vpc_id
-  assert:
+- assert:
     that:
       - "aws_vpc_id is defined"
       - "aws_vpc_id != ''"
     msg: "AMBISAFE AWS_VPC_ID is not defined"
-  when "aws_vpc_default == 'False'"
+  when: "aws_vpc_default == 'False'"
+  tags: configuration
 
-- name: Check variable aws_subnet_id
-  assert:
+- assert:
     that:
       - "aws_subnet_id is defined"
       - "aws_vpc_id != ''"
     msg: "AMBISAFE AWS_SUBNET_ID is not defined"
-  when "aws_vpc_default == 'False'"
+  when: "aws_vpc_default == 'False'"
+  tags: configuration
 
 # got terraform infrastructures for logserver
 - name: Create terraform data directory
   file:
     path: "{{ terraform_data_dir }}"
     state: directory
+  tags: configuration
 
 - name: Clean modules path
   file:
     state: absent
     path: "{{ terraform_data_dir }}/terraform_logserver/modules"
+  tags: configuration
 
 - name: Copy terraform logserver files to host
   copy:
     src: "terraform_logserver/"
     dest: "{{ terraform_data_dir }}/terraform_logserver/"
     force: yes
+  tags: configuration
 
 - name: Create TF files for elasticsearch & proxy
   template:
     src: main.tf.j2
     dest: "{{ terraform_data_dir }}/terraform_logserver/main.tf"
+  tags: configuration
 
 - name: Compile nginx/nginx.conf
   command: bash -c "cat {{ role_path }}/files/nginx/nginx.conf|gzip|base64"
   register: nginx_conf_gz_b64
+  tags: configuration
 
 - name: Compile logstash/02-input.conf
   command: bash -c "cat {{ role_path }}/files/logstash/02-input.conf|gzip|base64"
   register: input_conf_gz_b64
+  tags: configuration
 
 - name: Compile logstash/30-elasticsearch-output.conf
   command: bash -c "cat {{ role_path }}/files/logstash/30-elasticsearch-output.conf|gzip|base64"
   register: elasticsearch_output_conf_gz_b64
+  tags: configuration
 
 - name: Make docker-compose.yml
   template:
       src: docker-compose.yml.j2
       dest: "{{ terraform_data_dir }}/terraform_logserver/shared/docker-compose.yml"
+  tags: configuration
 
 - name: Compile docker-compose.yml
   command: bash -c "cat {{ terraform_data_dir }}/terraform_logserver/shared/docker-compose.yml|gzip|base64"
   register: docker_compose_gz_b64
+  tags: configuration
 
 - name: Create user_data for AWS
   template:
     src: aws_ec2_proxy.sh.j2
     dest: "{{ terraform_data_dir }}/terraform_logserver/shared/aws_ec2_proxy.sh"
+  tags: configuration
 
 # run terraform init
 - name: Run the terraform initialization
@@ -69,22 +79,27 @@
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
     creates: "{{ terraform_data_dir }}/terraform_logserver/.terraform"
+  tags: configuration
 
 # run terraform update modules
 - name: Clean modules path
   file:
     state: absent
     path: "{{ terraform_data_dir }}/terraform_logserver/.terraform/modules"
+  tags: configuration
 
 - name: Run the terraform update modules
   command: "terraform get -no-color"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
+  tags: configuration
 
 #run terraform apply -auto-approve
 - name: Run the logserver installation on AWS
   command: "terraform apply -auto-approve -no-color "
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
+  tags: apply
+
 
 
