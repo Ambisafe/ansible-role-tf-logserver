@@ -12,6 +12,7 @@ services:
          awslogs-region: "{{ aws_region }}"
          awslogs-group: "nginx-group"
          awslogs-stream: "nginx-stream"
+         awslogs-create-group: "true"
     ports:
       - 80:80
     volumes:
@@ -30,6 +31,7 @@ services:
          awslogs-region: "{{ aws_region }}"
          awslogs-group: "logstash-group"
          awslogs-stream: "logstash-stream"
+         awslogs-create-group: "true"
     ports:
      - 5044:5044
      - 9600:9600
