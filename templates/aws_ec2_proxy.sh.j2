@@ -19,7 +19,7 @@ echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >>/etc/default/docker
 echo "export AWS_REGION=$AWS_REGION" >>/etc/default/docker
 
 export IP=`curl ifconfig.co`
-export ES=${aws_es_vpc}
+export ES=${aws_es_endpoint}
 echo "export IP=$IP" >> .bash_profile
 echo "export ES=$ES" >> .bash_profile
 

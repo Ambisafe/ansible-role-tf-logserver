@@ -99,7 +99,7 @@
   command: "terraform plan -no-color "
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
-  tags: apply
+  tags: configuration
 
 #run terraform apply -auto-approve
 - name: Run the logserver installation on AWS

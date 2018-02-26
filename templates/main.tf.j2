@@ -19,32 +19,6 @@ resource "aws_default_subnet" "this" {
 }
 {% endif %}
 
-module "es" {
-  source                         = "modules/tf_aws_elasticsearch"
-  domain_name                    = "{{ es_domain_name }}"
-  es_version                     = "{{ es_version }}"
-  vpc_options                    = {
-    security_group_ids = ["${aws_security_group.this.id}"]
-
-{% if aws_vpc_default == 'True' %}
-    subnet_ids         = ["${aws_default_subnet.this.id}"]
-{% else %}
-    subnet_ids         = ["{{ aws_subnet_id }}"]
-{% endif %}
-
-  }
-  instance_count                 = "{{ es_instance_count }}"
-  instance_type                  = "{{ es_instance_type }}"
-  dedicated_master_type          = false
-  es_zone_awareness              = false
-  ebs_volume_size                = "{{ es_volume_size }}"
-
-}
-
-output "es_endpoint" {
-  value = "${module.es.endpoint}"
-}
-
 resource "aws_security_group" "this" {
   description = "security group"
 
@@ -95,7 +69,7 @@ data "template_file" "init" {
   template = "${file("shared/aws_ec2_proxy.sh")}"
 
   vars {
-    aws_es_vpc = "${es_endpoint}"
+    aws_es_endpoint= "${aws_elasticsearch_domain.es_vpc.endpoint}"
   }
 }
 
@@ -180,3 +154,68 @@ resource "aws_instance" "this" {
   ami = "${data.aws_ami.this.id}"
   availability_zone = "{{ aws_region }}a"
 }
+
+################ Elasticsearch ################
+
+data "aws_iam_policy_document" "es_vpc_management_access" {
+  statement {
+    actions = [
+      "es:*",
+    ]
+
+    resources = [
+      "${aws_elasticsearch_domain.es_vpc.arn}",
+      "${aws_elasticsearch_domain.es_vpc.arn}/*",
+    ]
+
+    principals {
+      type = "AWS"
+
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_elasticsearch_domain" "es_vpc" {
+  domain_name           = "tf-{{ es_domain_name }}"
+  elasticsearch_version = "{{ es_version }}"
+
+  cluster_config {
+    instance_type            = "{{ es_instance_type }}"
+    instance_count           = "{{ es_instance_count }}"
+    zone_awareness_enabled   = "false"
+  }
+
+  # advanced_options {
+  # }
+
+  vpc_options                    = {
+    security_group_ids = ["${aws_security_group.this.id}"]
+
+    {% if aws_vpc_default == 'True' %}
+        subnet_ids         = ["${aws_default_subnet.this.id}"]
+    {% else %}
+        subnet_ids         = ["{{ aws_subnet_id }}"]
+    {% endif %}
+
+  }
+
+
+  ebs_options {
+    ebs_enabled = "${ {{ es_volume_size }} > 0 ? true : false}"
+    volume_size = "{{ es_volume_size }}"
+    volume_type = "gp2"
+  }
+  snapshot_options {
+    automated_snapshot_start_hour = "0"
+  }
+  tags {
+    Domain = "{{ es_domain_name }}"
+  }
+}
+
+resource "aws_elasticsearch_domain_policy" "es_vpc_management_access" {
+  domain_name     = "tf-{{ es_domain_name }}"
+  access_policies = "${data.aws_iam_policy_document.es_vpc_management_access.json}"
+}
+
