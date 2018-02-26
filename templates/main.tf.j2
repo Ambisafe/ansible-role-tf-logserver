@@ -132,7 +132,7 @@ resource "aws_iam_role" "this" {
 resource "aws_iam_policy" "this" {
   name        = "ec2-cw"
   description = "ec2-cw"
-  policy      = "${aws_iam_policy_document.this.json}"
+  policy      = "${data.aws_iam_policy_document.this.json}"
 }
 
 resource "aws_iam_policy_attachment" "this" {
