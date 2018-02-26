@@ -42,17 +42,17 @@
   tags: configuration
 
 - name: Compile nginx/nginx.conf
-  command: bash -c "cat {{ role_path }}/files/nginx/nginx.conf|gzip|base64"
+  command: bash -c "cat {{ role_path }}/files/nginx/nginx.conf|base64"
   register: nginx_conf_gz_b64
   tags: configuration
 
 - name: Compile logstash/02-input.conf
-  command: bash -c "cat {{ role_path }}/files/logstash/02-input.conf|gzip|base64"
+  command: bash -c "cat {{ role_path }}/files/logstash/02-input.conf|base64"
   register: input_conf_gz_b64
   tags: configuration
 
 - name: Compile logstash/30-elasticsearch-output.conf
-  command: bash -c "cat {{ role_path }}/files/logstash/30-elasticsearch-output.conf|gzip|base64"
+  command: bash -c "cat {{ role_path }}/files/logstash/30-elasticsearch-output.conf|base64"
   register: elasticsearch_output_conf_gz_b64
   tags: configuration
 
@@ -63,7 +63,7 @@
   tags: configuration
 
 - name: Compile docker-compose.yml
-  command: bash -c "cat {{ terraform_data_dir }}/terraform_logserver/shared/docker-compose.yml|gzip|base64"
+  command: bash -c "cat {{ terraform_data_dir }}/terraform_logserver/shared/docker-compose.yml|base64"
   register: docker_compose_gz_b64
   tags: configuration
 
