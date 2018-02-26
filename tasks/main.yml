@@ -89,10 +89,17 @@
   tags: configuration
 
 - name: Run the terraform update modules
-  command: "terraform get -no-color"
+  command: "terraform get -update -no-color"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
   tags: configuration
+
+#run terraform plan
+- name: Run the terraform plan
+  command: "terraform plan -no-color "
+  args:
+    chdir: "{{ terraform_data_dir }}/terraform_logserver"
+  tags: apply
 
 #run terraform apply -auto-approve
 - name: Run the logserver installation on AWS
