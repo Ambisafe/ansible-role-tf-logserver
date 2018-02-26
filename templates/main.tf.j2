@@ -41,6 +41,10 @@ module "es" {
 
 }
 
+output "es_endpoint" {
+  value = "${module.es.endpoint}"
+}
+
 resource "aws_security_group" "this" {
   description = "security group"
 
@@ -91,7 +95,7 @@ data "template_file" "init" {
   template = "${file("shared/aws_ec2_proxy.sh")}"
 
   vars {
-    aws_es_vpc = "${module.es.endpoint}"
+    aws_es_vpc = "${es_endpoint}"
   }
 }
 
@@ -175,4 +179,5 @@ resource "aws_instance" "this" {
 
   ami = "${data.aws_ami.this.id}"
   availability_zone = "{{ aws_region }}a"
+  depends_on = ["module.es.aws_elasticsearch_domain"]
 }
