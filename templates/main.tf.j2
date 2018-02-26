@@ -179,5 +179,4 @@ resource "aws_instance" "this" {
 
   ami = "${data.aws_ami.this.id}"
   availability_zone = "{{ aws_region }}a"
-  depends_on = ["module.es.aws_elasticsearch_domain"]
 }
