@@ -115,13 +115,8 @@ data "aws_iam_policy_document" "this" {
     ]
 
     resources = [
-      "*",
+      "arn:aws:logs:*:*:*",
     ]
-
-   principals {
-      type = "AWS"
-      identifiers = ["*"]
-    }
   }
 }
 
@@ -154,7 +149,7 @@ resource "aws_iam_policy_attachment" "this" {
 
 resource "aws_iam_instance_profile" "this" {
   name  = "ec2-cw_profile"
-  roles = ["${aws_iam_role.this.name}"]
+  role = "${aws_iam_role.this.name}"
 }
 
 resource "aws_eip" "this" {
