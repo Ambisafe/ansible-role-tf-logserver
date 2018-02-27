@@ -43,7 +43,7 @@
 
 - name: Compile nginx/nginx.conf
   command: bash -c "cat {{ role_path }}/files/nginx/nginx.conf|base64"
-  register: nginx_conf_gz_b64
+  register: nginx_conf_b64
   tags: configuration
 
 - name: Make docker-compose.yml
@@ -54,7 +54,7 @@
 
 - name: Compile docker-compose.yml
   command: bash -c "cat {{ terraform_data_dir }}/terraform_logserver/shared/docker-compose.yml|base64"
-  register: docker_compose_gz_b64
+  register: docker_compose_b64
   tags: configuration
 
 - name: Create user_data for AWS
