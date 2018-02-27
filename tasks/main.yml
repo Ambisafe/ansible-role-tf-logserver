@@ -63,19 +63,19 @@
     dest: "{{ terraform_data_dir }}/terraform_logserver/shared/aws_ec2_proxy.sh"
   tags: configuration
 
+# run terraform update modules
+- name: Clean modules path
+  file:
+    state: absent
+    path: "{{ terraform_data_dir }}/terraform_logserver/.terraform/modules"
+  tags: configuration
+
 # run terraform init
 - name: Run the terraform initialization
   command: "terraform init -no-color"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
     creates: "{{ terraform_data_dir }}/terraform_logserver/.terraform"
-  tags: configuration
-
-# run terraform update modules
-- name: Clean modules path
-  file:
-    state: absent
-    path: "{{ terraform_data_dir }}/terraform_logserver/.terraform/modules"
   tags: configuration
 
 - name: Run the terraform update modules
