@@ -10,8 +10,8 @@ services:
       driver: "awslogs"
       options:
          awslogs-region: "{{ aws_region }}"
-         awslogs-group: "nginx-group"
-         awslogs-stream: "nginx-stream"
+         awslogs-group: "logserver"
+         awslogs-stream: "nginx"
          awslogs-create-group: "true"
     ports:
       - 80:80
@@ -29,14 +29,14 @@ services:
       driver: "awslogs"
       options:
          awslogs-region: "{{ aws_region }}"
-         awslogs-group: "logstash-group"
-         awslogs-stream: "logstash-stream"
+         awslogs-group: "logserver"
+         awslogs-stream: "logstash"
          awslogs-create-group: "true"
     ports:
      - 5044:5044
      - 9600:9600
     environment:
-      - JAVA_OPTS=-Xms1g -Xmx1g
+      - LS_JAVA_OPTS=-Xms1g -Xmx1g
       - XPACK_MONITORING_ENABLED=false
     volumes:
       - ./02-input.conf:/etc/logstash/conf.d/02-input.conf
