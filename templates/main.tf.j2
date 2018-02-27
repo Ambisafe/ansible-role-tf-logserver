@@ -320,3 +320,20 @@ data "archive_file" "cw-es-lambda" {
   output_path = "cw-es-lambda.zip"
 }
 
+resource "aws_lambda_permission" "cw-es-lambda_permission" {
+  statement_id = "allow-cloudwatch-lambda"
+  action = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.cw-es-logserver-lambda.arn}"
+
+  principal = "logs.{{ aws_region }}.amazonaws.com"
+
+  source_arn = "${aws_cloudwatch_log_group.logserver.arn}"
+}
+
+resource "aws_cloudwatch_log_subscription_filter" "cw-es-lambda-subscription" {
+  depends_on = ["aws_lambda_permission.cw-es-lambda_permission"]
+  name = "cw-es-lambda-subscription"
+  log_group_name = "${aws_cloudwatch_log_group.logserver.name}"
+  filter_pattern = "[ip, user, username, timestamp, request, status_code, bytes, http_referer, http_user_agent, http_x_forwarded_for]"
+  destination_arn = "${aws_lambda_function.cw-es-logserver-lambda.arn}"
+}
