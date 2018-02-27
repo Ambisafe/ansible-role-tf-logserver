@@ -220,3 +220,67 @@ resource "aws_elasticsearch_domain_policy" "es_vpc_management_access" {
   access_policies = "${data.aws_iam_policy_document.es_vpc_management_access.json}"
 }
 
+################# Log ##################
+
+data "aws_iam_policy_document" "lambda_to_es_document" {
+  statement {
+    actions = [
+      "es:*",
+    ]
+
+    resources = [
+      "${aws_elasticsearch_domain.es_vpc.arn}",
+      "${aws_elasticsearch_domain.es_vpc.arn}/*",
+    ]
+
+    principals {
+      type = "AWS"
+
+      identifiers = ["*"]
+    }
+  }
+  statement {
+    actions = [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DeleteNetworkInterface"
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "lambda-assume-role-policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "lambda_to_es_policy" {
+  name        = "lambda_to_es_policy"
+  policy      = "${data.aws_iam_policy_document.lambda_to_es_document.json}"
+}
+
+resource "aws_iam_role" "lambda_to_es_role" {
+  name               = "lambda_to_es_role"
+  assume_role_policy = "${data.aws_iam_policy_document.lambda-assume-role-policy.json}"
+}
+
+resource "aws_iam_policy_attachment" "lambda_to_es_attachment" {
+  name       = "lambda_to_es_attachment"
+  roles      = ["${aws_iam_role.lambda_to_es_role.name}"]
+  policy_arn = "${aws_iam_policy.lambda_to_es_policy.arn}"
+}
+
+
+

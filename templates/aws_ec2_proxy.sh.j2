@@ -34,21 +34,8 @@ FILE
 cat nginx.conf.gz.b64|base64 --decode >nginx.conf
 rm nginx.conf.gz.b64
 
-cat <<FILE > 02-input.conf.gz.b64
-{{ input_conf_gz_b64.stdout }}
-FILE
-cat 02-input.conf.gz.b64|base64 --decode >02-input.conf
-rm 02-input.conf.gz.b64
-
-cat <<FILE > 30-elasticsearch-output.conf.gz.b64
-{{ elasticsearch_output_conf_gz_b64.stdout }}
-FILE
-cat 30-elasticsearch-output.conf.gz.b64|base64 --decode >30-elasticsearch-output.conf
-rm 30-elasticsearch-output.conf.gz.b64
-
 sed -i "s|__ES__|$ES|g" ./nginx.conf
 sed -i "s|__IP__|$IP|g" ./nginx.conf
-sed -i "s|__ES__|$ES|g" ./30-elasticsearch-output.conf
 
 /usr/local/bin/docker-compose -f ./docker-compose.yml up -d
 

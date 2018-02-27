@@ -20,29 +20,5 @@ services:
     networks:
       logserver:
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:{{ ec2_logstash_version }}
-    container_name: logstash
-    hostname: logstash
-    restart: always
-    logging:
-      driver: "awslogs"
-      options:
-         awslogs-region: "{{ aws_region }}"
-         awslogs-group: "logserver"
-         awslogs-stream: "logstash"
-         awslogs-create-group: "true"
-    ports:
-     - 5044:5044
-     - 9600:9600
-    environment:
-      - LS_JAVA_OPTS=-Xms1g -Xmx1g
-      - XPACK_MONITORING_ENABLED=false
-    volumes:
-      - ./02-input.conf:/etc/logstash/conf.d/02-input.conf
-      - ./30-elasticsearch-output.conf:/etc/logstash/conf.d/30-elasticsearch-output.conf
-    networks:
-      logserver:
-
 networks:
   logserver:
