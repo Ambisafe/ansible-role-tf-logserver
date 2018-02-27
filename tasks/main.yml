@@ -68,7 +68,6 @@
   command: "terraform init -no-color"
   args:
     chdir: "{{ terraform_data_dir }}/terraform_logserver"
-    creates: "{{ terraform_data_dir }}/terraform_logserver/.terraform"
   tags: configuration
 
 - name: Run the terraform update modules
