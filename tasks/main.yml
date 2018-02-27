@@ -46,16 +46,6 @@
   register: nginx_conf_gz_b64
   tags: configuration
 
-- name: Compile logstash/02-input.conf
-  command: bash -c "cat {{ role_path }}/files/logstash/02-input.conf|base64"
-  register: input_conf_gz_b64
-  tags: configuration
-
-- name: Compile logstash/30-elasticsearch-output.conf
-  command: bash -c "cat {{ role_path }}/files/logstash/30-elasticsearch-output.conf|base64"
-  register: elasticsearch_output_conf_gz_b64
-  tags: configuration
-
 - name: Make docker-compose.yml
   template:
       src: docker-compose.yml.j2

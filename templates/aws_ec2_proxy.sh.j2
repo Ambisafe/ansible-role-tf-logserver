@@ -22,17 +22,17 @@ chmod +x /usr/local/bin/docker-compose
 chkconfig docker on
 service docker start
 
-cat <<FILE > docker-compose.yml.gz.b64
-{{ docker_compose_gz_b64.stdout }}
+cat <<FILE > docker-compose.yml.b64
+{{ docker_compose_b64.stdout }}
 FILE
-cat docker-compose.yml.gz.b64|base64 --decode >docker-compose.yml
-rm docker-compose.yml.gz.b64
+cat docker-compose.yml.b64|base64 --decode >docker-compose.yml
+rm docker-compose.yml.b64
 
-cat <<FILE > nginx.conf.gz.b64
-{{ nginx_conf_gz_b64.stdout }}
+cat <<FILE > nginx.conf.b64
+{{ nginx_conf_b64.stdout }}
 FILE
-cat nginx.conf.gz.b64|base64 --decode >nginx.conf
-rm nginx.conf.gz.b64
+cat nginx.conf.b64|base64 --decode >nginx.conf
+rm nginx.conf.b64
 
 sed -i "s|__ES__|$ES|g" ./nginx.conf
 sed -i "s|__IP__|$IP|g" ./nginx.conf
