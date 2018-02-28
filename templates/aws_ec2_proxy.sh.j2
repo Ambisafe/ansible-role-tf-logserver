@@ -22,9 +22,7 @@ chmod +x /usr/local/bin/docker-compose
 chkconfig docker on
 service docker start
 
-cat <<FILE >.htpasswd
-{{ kibana_login}}:{{ kibana_htpasswd }}
-FILE
+echo '{{ kibana_login}}:{{ kibana_htpasswd }}' > .htpasswd
 
 cat <<FILE > docker-compose.yml.b64
 {{ docker_compose_b64.stdout }}
