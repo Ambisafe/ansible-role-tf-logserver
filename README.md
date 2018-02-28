@@ -26,6 +26,8 @@ Role Variables
 -  `es_instance_count:` number of instances in the cluster elasticsearch.
 -  `es_instance_type:` elasticsearch instance type to use for data nodes.
 -  `es_volume_size:` size in GB of EBS volume to attach to each node and use for data storage.
+-  `kibana_login:` username for kibana
+-  `kibana_htpasswd:` md5 hash password for kibana
 
 Example Playbook
 ----------------
@@ -58,6 +60,9 @@ playbook.yml
     es_instance_count: "1"
     es_instance_type: "t2.small.elasticsearch"
     es_volume_size: "10"
+
+    kibana_login: "login"
+    kibana_htpasswd: "XXXXXXXXXXXXXXXXXXXXXXXXX"
 
   roles:
        - { role: terraform-logserver }
