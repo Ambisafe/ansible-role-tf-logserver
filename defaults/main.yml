@@ -11,5 +11,8 @@ es_instance_count: "1"
 es_instance_type: "t2.small.elasticsearch"
 es_volume_size: "10"
 
+route53_domain_name: "ambi.rocks."
+route53_prefix_domain_name: "logs"
+
 terraform_data_dir: "/opt/terraform/data"
 

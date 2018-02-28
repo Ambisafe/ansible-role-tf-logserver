@@ -30,6 +30,9 @@ Role Variables
 -  `kibana_login:` username for kibana
 -  `kibana_htpasswd:` md5 hash password for kibana
 
+-  `route53_domain_name:`
+-  `route53_prefix_domain_name:`
+
 Example Playbook
 ----------------
 requirements.yml
@@ -65,6 +68,8 @@ playbook.yml
     kibana_login: "login"
     kibana_htpasswd: "XXXXXXXXXXXXXXXXXXXXXXXXX"
 
+    route53_domain_name: "ambi.rocks."
+    route53_prefix_domain_name: "logs"
   roles:
        - { role: terraform-logserver }
 ```
