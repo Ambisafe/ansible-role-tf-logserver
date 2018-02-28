@@ -30,13 +30,6 @@ resource "aws_security_group" "this" {
   }
 
   ingress {
-      from_port = 5044
-      to_port = 5044
-      protocol = "tcp"
-      cidr_blocks = ["{{ aws_cidr_block_from_port_80 }}"]
-  }
-
-  ingress {
       from_port = 443
       to_port = 443
       protocol = "tcp"
