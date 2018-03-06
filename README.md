@@ -55,7 +55,7 @@ playbook.yml
     ec2_name: "logserver-proxy"
     ec2_instance_type: "t2.small"
     ec2_docker_compose: "1.19.0"
-    ec2_ssh_public_key: "ssh-ed25519 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    ec2_ssh_public_key: "ssh-rsa XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     ec2_nginx_version: "1.13"
     ec2_logstash_version: "6.2.1"
 

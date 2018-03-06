@@ -104,23 +104,23 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
 }
 
 resource "aws_iam_role" "this" {
-  name               = "cloudwatch-logs-role"
+  name               = "tf-log-cloudwatch-logs-role"
   assume_role_policy = "${data.aws_iam_policy_document.instance-assume-role-policy.json}"
 }
 
 resource "aws_iam_policy" "this" {
-  name        = "ec2-cw"
+  name        = "tf-log-ec2-cw"
   policy      = "${data.aws_iam_policy_document.this.json}"
 }
 
 resource "aws_iam_policy_attachment" "this" {
-  name       = "ec2-cw-attachment"
+  name       = "tf-log-ec2-cw-attachment"
   roles      = ["${aws_iam_role.this.name}"]
   policy_arn = "${aws_iam_policy.this.arn}"
 }
 
 resource "aws_iam_instance_profile" "this" {
-  name  = "ec2-cw_profile"
+  name  = "tf-log-ec2-cw-profile"
   role = "${aws_iam_role.this.name}"
 }
 
@@ -130,19 +130,19 @@ resource "aws_eip" "this" {
 }
 
 resource "aws_key_pair" "this" {
-  key_name   = "awx key"
+  key_name   = "tf-log-aws-key"
   public_key = "{{ ec2_ssh_public_key }}"
 }
 
 resource "aws_instance" "this" {
   iam_instance_profile   = "${aws_iam_instance_profile.this.name}"
   instance_type = "{{ ec2_instance_type }}"
-  key_name = "awx key"
+  key_name = "tf-log-aws-key"
   vpc_security_group_ids = [ "${aws_security_group.this.id}" ]
   associate_public_ip_address = true
   user_data = "${data.template_file.init.rendered}"
   tags {
-    Name = "{{ ec2_name }}"
+    Name = "tf-log-{{ ec2_name }}"
   }
 
   ami = "${data.aws_ami.this.id}"
@@ -171,7 +171,7 @@ data "aws_iam_policy_document" "es_vpc_management_access" {
 }
 
 resource "aws_elasticsearch_domain" "es_vpc" {
-  domain_name           = "tf-{{ es_domain_name }}"
+  domain_name           = "tf-log-{{ es_domain_name }}"
   elasticsearch_version = "{{ es_version }}"
 
   cluster_config {
@@ -209,7 +209,7 @@ resource "aws_elasticsearch_domain" "es_vpc" {
 }
 
 resource "aws_elasticsearch_domain_policy" "es_vpc_management_access" {
-  domain_name     = "tf-{{ es_domain_name }}"
+  domain_name     = "tf-log-{{ es_domain_name }}"
   access_policies = "${data.aws_iam_policy_document.es_vpc_management_access.json}"
 }
 
@@ -255,17 +255,17 @@ data "aws_iam_policy_document" "lambda-assume-role-policy" {
 }
 
 resource "aws_iam_policy" "lambda_to_es_policy" {
-  name        = "lambda_to_es_policy"
+  name        = "tf-log-lambda_to_es_policy"
   policy      = "${data.aws_iam_policy_document.lambda_to_es_document.json}"
 }
 
 resource "aws_iam_role" "lambda_to_es_role" {
-  name               = "lambda_to_es_role"
+  name               = "tf-log-lambda_to_es_role"
   assume_role_policy = "${data.aws_iam_policy_document.lambda-assume-role-policy.json}"
 }
 
 resource "aws_iam_policy_attachment" "lambda_to_es_attachment" {
-  name       = "lambda_to_es_attachment"
+  name       = "tf-log-lambda_to_es_attachment"
   roles      = ["${aws_iam_role.lambda_to_es_role.name}"]
   policy_arn = "${aws_iam_policy.lambda_to_es_policy.arn}"
 }
@@ -325,19 +325,19 @@ resource "aws_lambda_permission" "cw-es-lambda_permission" {
 
 resource "aws_cloudwatch_log_subscription_filter" "cw-es-lambda-subscription" {
   depends_on = ["aws_lambda_permission.cw-es-lambda_permission"]
-  name = "cw-es-lambda-subscription"
+  name = "tf-log-cw-es-lambda-subscription"
   log_group_name = "${aws_cloudwatch_log_group.logserver.name}"
   filter_pattern = "[ip, user, username, timestamp, request, status_code, bytes, http_referer, http_user_agent, http_x_forwarded_for]"
   destination_arn = "${aws_lambda_function.cw-es-logserver-lambda.arn}"
 }
 
 data "aws_route53_zone" "selected" {
-  name         = "ambi.rocks."
+  name         = "{{ route53_domain_name }}"
 }
 
-resource "aws_route53_record" "logs" {
+resource "aws_route53_record" "this" {
   zone_id = "${data.aws_route53_zone.selected.zone_id}"
-  name    = "logs.${data.aws_route53_zone.selected.name}"
+  name    = "{{ route53_prefix_domain_name }}.${data.aws_route53_zone.selected.name}"
   type    = "A"
   ttl     = "300"
   records = ["${aws_eip.this.public_ip}"]
