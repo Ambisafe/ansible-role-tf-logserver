@@ -23,18 +23,8 @@ chkconfig docker on
 service docker start
 
 echo '{{ kibana_login}}:{{ kibana_htpasswd }}' > .htpasswd
-
-cat <<FILE > docker-compose.yml.b64
-{{ docker_compose_b64.stdout }}
-FILE
-cat docker-compose.yml.b64|base64 --decode >docker-compose.yml
-rm docker-compose.yml.b64
-
-cat <<FILE > nginx.conf.b64
-{{ nginx_conf_b64.stdout }}
-FILE
-cat nginx.conf.b64|base64 --decode >nginx.conf
-rm nginx.conf.b64
+echo "{{ docker_compose_b64.stdout }}" | base64 --decode > docker-compose.yml
+echo "{{ nginx_conf_b64.stdout }}" | base64 --decode > nginx.conf
 
 sed -i "s|__ES__|$ES|g" ./nginx.conf
 sed -i "s|__IP__|$IP|g" ./nginx.conf
